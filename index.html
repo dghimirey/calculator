@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧮</text></svg>">
+</head>
+<body>
+    <div class="calculator-container">    
+        <!-- Calculator display -->
+        <div class="display" role="region" aria-label="Calculator display">
+            <div class="expression-display" id="expressionDisplay" aria-live="polite">
+                0
+            </div>
+            <div class="result-display" id="resultDisplay" aria-live="assertive">
+                0
+            </div>
+        </div>
+        
+        <!-- Calculator keypad -->
+        <div class="keypad" role="grid" aria-label="Calculator keypad">
+            <!-- First row -->
+            <button class="key action" data-action="clear" aria-label="Clear all">
+                AC
+            </button>
+            <button class="key action" data-action="delete" aria-label="Delete last character">
+                <i class="fas fa-backspace"></i>
+            </button>
+            <button class="key operator" data-action="modulo" aria-label="Modulo">
+                %
+            </button>
+            <button class="key operator" data-action="divide" aria-label="Divide">
+                ÷
+            </button>
+            
+            <!-- Second row -->
+            <button class="key number" data-number="7" aria-label="Number 7">
+                7
+            </button>
+            <button class="key number" data-number="8" aria-label="Number 8">
+                8
+            </button>
+            <button class="key number" data-number="9" aria-label="Number 9">
+                9
+            </button>
+            <button class="key operator" data-action="multiply" aria-label="Multiply">
+                ×
+            </button>
+            
+            <!-- Third row -->
+            <button class="key number" data-number="4" aria-label="Number 4">
+                4
+            </button>
+            <button class="key number" data-number="5" aria-label="Number 5">
+                5
+            </button>
+            <button class="key number" data-number="6" aria-label="Number 6">
+                6
+            </button>
+            <button class="key operator" data-action="subtract" aria-label="Subtract">
+                -
+            </button>
+            
+            <!-- Fourth row -->
+            <button class="key number" data-number="1" aria-label="Number 1">
+                1
+            </button>
+            <button class="key number" data-number="2" aria-label="Number 2">
+                2
+            </button>
+            <button class="key number" data-number="3" aria-label="Number 3">
+                3
+            </button>
+            <button class="key operator" data-action="add" aria-label="Add">
+                +
+            </button>
+            
+            <!-- Fifth row -->
+            <button class="key number wide" data-number="0" aria-label="Number 0">
+                0
+            </button>
+            <button class="key number" data-action="decimal" aria-label="Decimal point">
+                .
+            </button>
+            <button class="key equals" data-action="equals" aria-label="Equals">
+                =
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

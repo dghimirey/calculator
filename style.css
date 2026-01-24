@@ -1,0 +1,257 @@
+:root {
+    --bg-color: #1c1c1e;
+    --calculator-bg: #2c2c2e;
+    --display-bg: #3a3a3c;
+    --text-primary: #f5f5f7;
+    --text-secondary: #aeaeb2;
+    --key-number-bg: #3a3a3c;
+    --key-number-hover: #48484a;
+    --key-operator-bg: #ff9500;
+    --key-operator-hover: #ffad33;
+    --key-action-bg: #636366;
+    --key-action-hover: #7c7c80;
+    --key-equals-bg: #30b0c7;
+    --key-equals-hover: #4ac7df;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --ripple-color: rgba(255, 255, 255, 0.3);
+    --glass-border: rgba(255, 255, 255, 0.05);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ============================================
+   Calculator Container with Glassmorphism
+   ============================================ */
+.calculator-container {
+    background-color: var(--calculator-bg);
+    border-radius: 24px;
+    box-shadow: 
+        0 10px 30px var(--shadow-color),
+        inset 0 1px 0 var(--glass-border);
+    width: 100%;
+    max-width: 360px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ============================================
+   Dual Display System
+   ============================================ */
+.display {
+    background-color: var(--display-bg);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 24px;
+    text-align: right;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-top: 20px;
+}
+
+.expression-display {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    min-height: 24px;
+    word-break: break-all;
+    overflow-wrap: break-word;
+}
+
+.result-display {
+    font-size: 2.8rem;
+    font-weight: 600;
+    line-height: 1.1;
+    word-break: break-all;
+    overflow-wrap: break-word;
+}
+
+/* ============================================
+   Keypad Grid Layout
+   ============================================ */
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 12px;
+}
+
+/* ============================================
+   Key Button Styling
+   ============================================ */
+.key {
+    border: none;
+    border-radius: 16px;
+    font-size: 1.5rem;
+    font-weight: 500;
+    height: 70px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.1s ease;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Number keys */
+.key.number {
+    background-color: var(--key-number-bg);
+    color: var(--text-primary);
+}
+
+.key.number:hover, .key.number:focus-visible {
+    background-color: var(--key-number-hover);
+    transform: translateY(-2px);
+}
+
+.key.number:active {
+    transform: translateY(0);
+}
+
+/* Operator keys */
+.key.operator {
+    background-color: var(--key-operator-bg);
+    color: white;
+}
+
+.key.operator:hover, .key.operator:focus-visible {
+    background-color: var(--key-operator-hover);
+    transform: translateY(-2px);
+}
+
+.key.operator:active {
+    transform: translateY(0);
+}
+
+/* Action keys (AC, Delete) */
+.key.action {
+    background-color: var(--key-action-bg);
+    color: white;
+    font-size: 1.3rem;
+}
+
+.key.action:hover, .key.action:focus-visible {
+    background-color: var(--key-action-hover);
+    transform: translateY(-2px);
+}
+
+.key.action:active {
+    transform: translateY(0);
+}
+
+/* Equals key */
+.key.equals {
+    background-color: var(--key-equals-bg);
+    color: white;
+    grid-column: span 1;
+}
+
+.key.equals:hover, .key.equals:focus-visible {
+    background-color: var(--key-equals-hover);
+    transform: translateY(-2px);
+}
+
+.key.equals:active {
+    transform: translateY(0);
+}
+
+/* Wide key for zero */
+.key.wide {
+    grid-column: span 2;
+}
+
+/* Ripple effect */
+.key::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: var(--ripple-color);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.key.ripple::after {
+    animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(40, 40);
+        opacity: 0;
+    }
+}
+
+/* ============================================
+   Responsive Design for Larger Screens
+   ============================================ */
+@media (min-width: 768px) {
+    .calculator-container {
+        max-width: 420px;
+        padding: 28px;
+    }
+    
+    .display {
+        min-height: 140px;
+        padding: 24px;
+        margin-bottom: 32px;
+    }
+    
+    .expression-display {
+        font-size: 1.3rem;
+    }
+    
+    .result-display {
+        font-size: 3.5rem;
+    }
+    
+    .key {
+        height: 80px;
+        font-size: 1.7rem;
+        border-radius: 20px;
+    }
+    
+    .keypad {
+        grid-gap: 16px;
+    }
+    
+    .key.action {
+        font-size: 1.4rem;
+    }
+}
+
+/* Accessibility: Focus styles */
+.key:focus-visible {
+    outline: 3px solid var(--key-operator-bg);
+    outline-offset: 2px;
+}
