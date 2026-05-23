@@ -30,7 +30,7 @@
     --key-mem-hover: #d06c9c;
     --key-mem-active: #a04a74;
     
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 * {
@@ -47,71 +47,71 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 24px;
+    padding: 30px;
 }
 
-/* Wider calculator for laptop screens */
+/* Wider container for laptop screens */
 .calculator-container {
     background: var(--calculator-bg);
-    border-radius: 32px;
+    border-radius: 36px;
     box-shadow: var(--shadow-sm);
     width: 100%;
-    max-width: 520px;
-    padding: 24px;
+    max-width: 650px;      /* significantly wider */
+    padding: 28px;
 }
 
 .calc-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 16px;
-    padding: 0 4px;
+    margin-bottom: 20px;
+    padding: 0 6px;
     opacity: 0.7;
 }
 
 .calc-badge {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-weight: 600;
     background: rgba(255,255,255,0.1);
-    padding: 4px 12px;
-    border-radius: 20px;
+    padding: 6px 14px;
+    border-radius: 30px;
 }
 
 .display {
     background: var(--display-bg);
-    border-radius: 24px;
-    padding: 24px 20px;
-    margin-bottom: 28px;
+    border-radius: 28px;
+    padding: 28px 24px;
+    margin-bottom: 32px;
     text-align: right;
-    min-height: 140px;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
+    min-height: 160px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .display-status {
     display: flex;
     justify-content: space-between;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-weight: 500;
     color: var(--text-muted);
-    margin-bottom: 12px;
+    margin-bottom: 15px;
 }
 
 .memory-status, .mode-status {
-    background: rgba(255,255,255,0.05);
-    padding: 2px 10px;
-    border-radius: 20px;
+    background: rgba(255,255,255,0.06);
+    padding: 3px 12px;
+    border-radius: 24px;
 }
 
 .expression-display {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: var(--text-secondary);
-    min-height: 32px;
+    min-height: 36px;
     word-break: break-word;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .result-display {
-    font-size: 3rem;
-    font-weight: 600;
+    font-size: 3.4rem;
+    font-weight: 700;
     line-height: 1.2;
     word-break: break-word;
 }
@@ -119,32 +119,35 @@ body {
 .keypad {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+    gap: 14px;
 }
 
 .key {
     border: none;
-    border-radius: 24px;
-    font-size: 1.5rem;
+    border-radius: 28px;
+    font-size: 1.6rem;
     font-weight: 500;
-    height: 76px;
+    height: 84px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.1s ease;
+    transition: background 0.08s linear;
     background: #3a3a4a;
     color: white;
     box-shadow: var(--shadow-sm);
-    /* No shine, no ripple, no pseudo-elements */
 }
 
-/* Remove all ripple/shine pseudo-elements */
+/* No pseudo-elements, no shine */
 .key::after {
     display: none;
 }
 
-/* Flat button styles - no shine on press */
+.key:active {
+    transform: none;  /* no scale effect */
+}
+
+/* Flat colors */
 .key.number { background: var(--key-number-bg); }
 .key.number:hover { background: var(--key-number-hover); }
 .key.number:active { background: var(--key-number-active); }
@@ -157,7 +160,7 @@ body {
 .key.action:hover { background: var(--key-action-hover); }
 .key.action:active { background: var(--key-action-active); }
 
-.key.equals { background: var(--key-equals-bg); font-size: 1.8rem; }
+.key.equals { background: var(--key-equals-bg); font-size: 2rem; }
 .key.equals:hover { background: var(--key-equals-hover); }
 .key.equals:active { background: var(--key-equals-active); }
 
@@ -165,36 +168,31 @@ body {
 .key.function:hover { background: var(--key-function-hover); }
 .key.function:active { background: var(--key-function-active); }
 
-.key.mem-action { background: var(--key-mem-bg); font-size: 1rem; font-weight: 600; }
+.key.mem-action { background: var(--key-mem-bg); font-size: 1.1rem; font-weight: 600; }
 .key.mem-action:hover { background: var(--key-mem-hover); }
 .key.mem-action:active { background: var(--key-mem-active); }
 
 .key.wide { grid-column: span 2; }
 
-/* No transform scaling on press - keep solid */
-.key:active {
-    transform: none;
-}
-
 .keyboard-hint {
-    margin-top: 24px;
-    padding: 10px 16px;
+    margin-top: 28px;
+    padding: 12px 18px;
     background: rgba(255,255,255,0.05);
-    border-radius: 48px;
+    border-radius: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 14px;
-    font-size: 0.75rem;
+    gap: 16px;
+    font-size: 0.8rem;
     color: var(--text-muted);
 }
 
 kbd {
-    background: rgba(0,0,0,0.4);
-    padding: 3px 8px;
-    border-radius: 6px;
+    background: rgba(0,0,0,0.45);
+    padding: 4px 10px;
+    border-radius: 8px;
     font-family: monospace;
-    margin: 0 2px;
+    margin: 0 3px;
 }
 
 .key:focus-visible {
@@ -202,10 +200,24 @@ kbd {
     outline-offset: 2px;
 }
 
-/* Responsive: slightly smaller on narrow screens, but still wide enough on laptop */
-@media (max-width: 560px) {
+/* Responsive: still comfortable on smaller laptops */
+@media (max-width: 700px) {
     .calculator-container {
-        max-width: 450px;
+        max-width: 550px;
+        padding: 22px;
+    }
+    .key {
+        height: 74px;
+        font-size: 1.4rem;
+    }
+    .result-display {
+        font-size: 2.8rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .calculator-container {
+        max-width: 480px;
         padding: 18px;
     }
     .key {
@@ -213,17 +225,17 @@ kbd {
         font-size: 1.3rem;
     }
     .result-display {
-        font-size: 2.5rem;
+        font-size: 2.4rem;
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 500px) {
     .calculator-container {
-        max-width: 380px;
+        max-width: 400px;
         padding: 16px;
     }
     .key {
-        height: 60px;
+        height: 62px;
         font-size: 1.2rem;
     }
     .result-display {
