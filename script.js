@@ -18,12 +18,12 @@ class Calculator {
     }
     
     init() {
-        this.setupEvents();
+        this.bindEvents();
         this.updateDisplay();
         this.updateMemoryIndicator();
     }
     
-    setupEvents() {
+    bindEvents() {
         this.keypad.addEventListener('click', (e) => {
             const btn = e.target.closest('.key');
             if (!btn) return;
@@ -58,7 +58,6 @@ class Calculator {
         document.addEventListener('keydown', (e) => this.handleKeyboard(e));
     }
     
-    // ----- Core logic -----
     handleNumber(num) {
         if (this.currentInput === 'Error') this.clearAll();
         if (this.waitingForNewInput || this.currentInput === '0' || this.lastAction === 'equals') {
@@ -96,15 +95,17 @@ class Calculator {
             this.waitingForNewInput = false;
         }
         
+        const symbols = { add: '+', subtract: '-', multiply: '×', divide: '÷', modulo: '%' };
+        const operatorSymbol = symbols[op];
+        if (!operatorSymbol) return;
+        
         if (this.lastAction === 'operator' && this.expression) {
-            // replace last operator
             this.expression = this.expression.slice(0, -2);
         } else if (!this.waitingForNewInput && this.currentInput !== 'Error') {
             this.expression += `${this.formatNumber(this.currentInput)} `;
         }
         
-        const symbols = { add: '+', subtract: '-', multiply: '×', divide: '÷', modulo: '%' };
-        this.expression += `${symbols[op]} `;
+        this.expression += `${operatorSymbol} `;
         this.operator = op;
         this.waitingForNewInput = true;
         this.decimalUsed = false;
@@ -120,8 +121,10 @@ class Calculator {
             expr = this.expression + this.formatNumber(this.currentInput);
         }
         expr = expr.trim();
-        const lastChar = expr[expr.length-1];
-        if (['+','-','×','÷','%'].includes(lastChar)) expr = expr.slice(0, -1).trim();
+        const lastChar = expr[expr.length - 1];
+        if (['+', '-', '×', '÷', '%'].includes(lastChar)) {
+            expr = expr.slice(0, -1).trim();
+        }
         if (!expr) return;
         
         try {
@@ -134,7 +137,7 @@ class Calculator {
             this.decimalUsed = this.currentInput.includes('.');
             this.lastAction = 'equals';
             this.updateDisplay();
-        } catch(e) {
+        } catch (err) {
             this.currentInput = 'Error';
             this.expression = '';
             this.updateDisplay();
@@ -146,33 +149,38 @@ class Calculator {
         let result = parseFloat(tokens[0]);
         for (let i = 1; i < tokens.length; i += 2) {
             const op = tokens[i];
-            const num = parseFloat(tokens[i+1]);
+            const num = parseFloat(tokens[i + 1]);
             if (isNaN(num)) continue;
-            switch(op) {
+            switch (op) {
                 case '+': result = this.add(result, num); break;
                 case '-': result = this.subtract(result, num); break;
                 case '*': result = this.multiply(result, num); break;
-                case '/': 
-                    if (num === 0) throw new Error('Div by zero');
+                case '/':
+                    if (num === 0) throw new Error('Division by zero');
                     result = this.divide(result, num);
                     break;
                 case '%': result = this.modulo(result, num); break;
+                default: break;
             }
         }
         return result;
     }
     
-    add(a,b) { return parseFloat((a + b).toPrecision(12)); }
-    subtract(a,b) { return parseFloat((a - b).toPrecision(12)); }
-    multiply(a,b) { return parseFloat((a * b).toPrecision(12)); }
-    divide(a,b) { return parseFloat((a / b).toPrecision(12)); }
-    modulo(a,b) { return parseFloat((a % b).toPrecision(12)); }
+    add(a, b) { return parseFloat((a + b).toPrecision(12)); }
+    subtract(a, b) { return parseFloat((a - b).toPrecision(12)); }
+    multiply(a, b) { return parseFloat((a * b).toPrecision(12)); }
+    divide(a, b) { return parseFloat((a / b).toPrecision(12)); }
+    modulo(a, b) { return parseFloat((a % b).toPrecision(12)); }
     
     squareRoot() {
         if (this.currentInput === 'Error') this.clearAll();
         let val = parseFloat(this.currentInput);
         if (isNaN(val)) return;
-        if (val < 0) { this.currentInput = 'Error'; this.updateDisplay(); return; }
+        if (val < 0) {
+            this.currentInput = 'Error';
+            this.updateDisplay();
+            return;
+        }
         const res = Math.sqrt(val);
         this.currentInput = this.formatResult(res);
         this.expression = `√(${this.formatNumber(val)}) =`;
@@ -194,9 +202,9 @@ class Calculator {
     
     memoryOperation(action) {
         const curr = parseFloat(this.currentInput);
-        switch(action) {
+        switch (action) {
             case 'memory-clear': this.memory = 0; break;
-            case 'memory-recall': 
+            case 'memory-recall':
                 if (this.memory !== 0) {
                     this.currentInput = this.formatResult(this.memory);
                     this.decimalUsed = this.currentInput.includes('.');
@@ -205,8 +213,13 @@ class Calculator {
                     this.updateDisplay();
                 }
                 break;
-            case 'memory-add': if (!isNaN(curr)) this.memory = this.add(this.memory, curr); break;
-            case 'memory-subtract': if (!isNaN(curr)) this.memory = this.subtract(this.memory, curr); break;
+            case 'memory-add':
+                if (!isNaN(curr)) this.memory = this.add(this.memory, curr);
+                break;
+            case 'memory-subtract':
+                if (!isNaN(curr)) this.memory = this.subtract(this.memory, curr);
+                break;
+            default: break;
         }
         this.updateMemoryIndicator();
     }
@@ -242,27 +255,35 @@ class Calculator {
         try {
             let preview = this.expression + this.formatNumber(this.currentInput);
             preview = preview.trim();
-            const last = preview[preview.length-1];
-            if (['+','-','×','÷','%'].includes(last)) return;
-            let evalPreview = preview.replace(/×/g,'*').replace(/÷/g,'/');
+            const last = preview[preview.length - 1];
+            if (['+', '-', '×', '÷', '%'].includes(last)) return;
+            let evalPreview = preview.replace(/×/g, '*').replace(/÷/g, '/');
             const res = this.safeEval(evalPreview);
             this.resultDisplay.textContent = this.formatResult(res);
-        } catch(e) { /* ignore */ }
+        } catch (e) {
+            // Silently ignore preview errors
+        }
     }
     
-    // ---- Formatting ----
     formatNumber(num) {
         if (num === 'Error' || num === '∞' || num === '-∞') return num;
         const n = parseFloat(num);
         if (isNaN(n)) return '0';
-        return new Intl.NumberFormat('en-US', { maximumFractionDigits: 10, useGrouping: true }).format(n);
+        return new Intl.NumberFormat('en-US', {
+            maximumFractionDigits: 10,
+            useGrouping: true
+        }).format(n);
     }
     
     formatResult(res) {
         if (!isFinite(res)) return res > 0 ? '∞' : '-∞';
-        if (Math.abs(res) > 1e12 || (Math.abs(res) < 1e-6 && res !== 0)) return res.toExponential(8);
+        if (Math.abs(res) > 1e12 || (Math.abs(res) < 1e-6 && res !== 0)) {
+            return res.toExponential(8);
+        }
         let formatted = this.formatNumber(res);
-        if (formatted.length > 14) return parseFloat(res.toPrecision(10)).toString();
+        if (formatted.length > 14) {
+            return parseFloat(res.toPrecision(10)).toString();
+        }
         return formatted;
     }
     
@@ -274,16 +295,18 @@ class Calculator {
     updateMemoryIndicator() {
         const memSpan = document.getElementById('memoryStatusIcon');
         if (memSpan) {
-            if (this.memory !== 0) memSpan.innerHTML = '<i class="fa-solid fa-database"></i> M';
-            else memSpan.innerHTML = '';
+            if (this.memory !== 0) {
+                memSpan.innerHTML = '<i class="fa-solid fa-database"></i> M';
+            } else {
+                memSpan.innerHTML = '';
+            }
         }
     }
     
-    // ---- Keyboard + Ripple ----
     handleKeyboard(e) {
         const key = e.key;
-        const calcKeys = ['0','1','2','3','4','5','6','7','8','9','.','+','-','*','/','%','Enter','=','Escape','Delete','Backspace'];
-        if (!calcKeys.includes(key)) return;
+        const validKeys = ['0','1','2','3','4','5','6','7','8','9','.','+','-','*','/','%','Enter','=','Escape','Delete','Backspace'];
+        if (!validKeys.includes(key)) return;
         e.preventDefault();
         
         const map = {
@@ -294,14 +317,20 @@ class Calculator {
         const action = map[key];
         if (!action) return;
         
-        if (['0','1','2','3','4','5','6','7','8','9'].includes(key)) this.handleNumber(key);
-        else if (key === '.') this.handleDecimal();
-        else if (['+','-','*','/','%'].includes(key)) this.handleOperator(action);
-        else if (action === 'equals') this.calculate();
-        else if (action === 'clear') this.clearAll();
-        else if (action === 'delete') this.deleteLast();
+        if (['0','1','2','3','4','5','6','7','8','9'].includes(key)) {
+            this.handleNumber(key);
+        } else if (key === '.') {
+            this.handleDecimal();
+        } else if (['+','-','*','/','%'].includes(key)) {
+            this.handleOperator(action);
+        } else if (action === 'equals') {
+            this.calculate();
+        } else if (action === 'clear') {
+            this.clearAll();
+        } else if (action === 'delete') {
+            this.deleteLast();
+        }
         
-        // visual feedback on button
         const btn = document.querySelector(`[data-action="${action}"]`) || document.querySelector(`[data-number="${key}"]`);
         if (btn) this.ripple(btn);
     }
