@@ -4,7 +4,6 @@ class Calculator {
         this.resultDisplay = document.getElementById('resultDisplay');
         this.keypad = document.querySelector('.keypad');
         
-        // State
         this.currentInput = '0';
         this.expression = '';
         this.operator = null;
@@ -27,7 +26,6 @@ class Calculator {
         this.keypad.addEventListener('click', (e) => {
             const btn = e.target.closest('.key');
             if (!btn) return;
-            this.ripple(btn);
             
             if (btn.classList.contains('number')) {
                 const num = btn.dataset.number;
@@ -260,9 +258,7 @@ class Calculator {
             let evalPreview = preview.replace(/×/g, '*').replace(/÷/g, '/');
             const res = this.safeEval(evalPreview);
             this.resultDisplay.textContent = this.formatResult(res);
-        } catch (e) {
-            // Silently ignore preview errors
-        }
+        } catch (e) { /* ignore */ }
     }
     
     formatNumber(num) {
@@ -330,16 +326,6 @@ class Calculator {
         } else if (action === 'delete') {
             this.deleteLast();
         }
-        
-        const btn = document.querySelector(`[data-action="${action}"]`) || document.querySelector(`[data-number="${key}"]`);
-        if (btn) this.ripple(btn);
-    }
-    
-    ripple(btn) {
-        btn.classList.remove('ripple');
-        void btn.offsetWidth;
-        btn.classList.add('ripple');
-        setTimeout(() => btn.classList.remove('ripple'), 400);
     }
 }
 
