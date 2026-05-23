@@ -5,6 +5,10 @@ class Calculator {
         this.resultDisplay = document.getElementById('resultDisplay');
         this.keypad = document.querySelector('.keypad');
         
+        // Memory and state
+        this.memory = 0;
+        this.lastResult = null;
+        
         // Calculator state
         this.currentInput = '0';
         this.expression = '';
@@ -12,6 +16,7 @@ class Calculator {
         this.waitingForNewInput = false;
         this.decimalUsed = false;
         this.lastAction = null;
+        this.expressionBuilt = false;
         
         // Initialize
         this.init();
@@ -23,6 +28,7 @@ class Calculator {
     init() {
         this.setupEventListeners();
         this.updateDisplay();
+        this.updateMemoryStatus();
         
         // Set initial focus for better accessibility
         this.keypad.setAttribute('tabindex', '-1');
@@ -60,6 +66,18 @@ class Calculator {
                     this.deleteLastCharacter();
                 }
             }
+            else if (key.classList.contains('function')) {
+                const action = key.getAttribute('data-action');
+                if (action === 'square-root') {
+                    this.calculateSquareRoot();
+                } else if (action === 'sign') {
+                    this.toggleSign();
+                }
+            }
+            else if (key.classList.contains('mem-action')) {
+                const action = key.getAttribute('data-action');
+                this.handleMemory(action);
+            }
             else if (key.classList.contains('equals')) {
                 this.calculateResult();
             }
@@ -72,17 +90,127 @@ class Calculator {
     }
     
     /**
+     * Handle memory functions
+     * @param {string} action - Memory action (memory-clear, memory-recall, memory-add, memory-subtract)
+     */
+    handleMemory(action) {
+        const currentValue = parseFloat(this.currentInput);
+        
+        switch(action) {
+            case 'memory-clear':
+                this.memory = 0;
+                break;
+            case 'memory-recall':
+                if (!isNaN(this.memory) && this.memory !== 0) {
+                    this.currentInput = this.formatResult(this.memory);
+                    this.decimalUsed = this.currentInput.includes('.');
+                    this.waitingForNewInput = false;
+                    this.expressionBuilt = false;
+                    this.updateDisplay();
+                }
+                break;
+            case 'memory-add':
+                if (!isNaN(currentValue)) {
+                    this.memory = this.add(this.memory, currentValue);
+                }
+                break;
+            case 'memory-subtract':
+                if (!isNaN(currentValue)) {
+                    this.memory = this.subtract(this.memory, currentValue);
+                }
+                break;
+        }
+        
+        this.updateMemoryStatus();
+    }
+    
+    /**
+     * Update memory status indicator
+     */
+    updateMemoryStatus() {
+        const memoryStatus = document.getElementById('memoryStatusIcon');
+        if (memoryStatus) {
+            if (this.memory !== 0) {
+                memoryStatus.innerHTML = '<i class="fa-solid fa-database"></i> M';
+                memoryStatus.style.opacity = '1';
+            } else {
+                memoryStatus.innerHTML = '';
+                memoryStatus.style.opacity = '0.5';
+            }
+        }
+    }
+    
+    /**
+     * Calculate square root of current input
+     */
+    calculateSquareRoot() {
+        if (this.currentInput === 'Error') {
+            this.clearAll();
+            return;
+        }
+        
+        let value = parseFloat(this.currentInput);
+        
+        if (isNaN(value)) {
+            this.currentInput = 'Error';
+            this.updateDisplay();
+            return;
+        }
+        
+        if (value < 0) {
+            this.currentInput = 'Error';
+            this.updateDisplay();
+            return;
+        }
+        
+        const result = Math.sqrt(value);
+        this.currentInput = this.formatResult(result);
+        this.expression = `√(${this.formatNumber(value)}) =`;
+        this.waitingForNewInput = true;
+        this.decimalUsed = this.currentInput.includes('.');
+        this.lastAction = 'equals';
+        this.expressionBuilt = true;
+        this.updateDisplay();
+    }
+    
+    /**
+     * Toggle sign (positive/negative) of current input
+     */
+    toggleSign() {
+        if (this.currentInput === 'Error' || this.currentInput === '0') return;
+        
+        let value = parseFloat(this.currentInput);
+        if (isNaN(value)) return;
+        
+        value = -value;
+        this.currentInput = this.formatResult(value);
+        this.decimalUsed = this.currentInput.includes('.');
+        this.updateDisplay();
+        
+        // Update live preview if needed
+        if (!this.waitingForNewInput && this.operator) {
+            this.updateLivePreview();
+        }
+    }
+    
+    /**
      * Handle number input from buttons or keyboard
      * @param {string} number - The number to input
      */
     handleNumberInput(number) {
-        // If we're waiting for a new input after an operator, reset
-        if (this.waitingForNewInput || this.currentInput === '0' || this.currentInput === 'Error') {
+        // Clear error state
+        if (this.currentInput === 'Error') {
+            this.clearAll();
+        }
+        
+        // If we're waiting for a new input after an operator or result, reset
+        if (this.waitingForNewInput || this.currentInput === '0' || this.expressionBuilt) {
             this.currentInput = number;
             this.waitingForNewInput = false;
+            this.expressionBuilt = false;
         } else {
             // Prevent input from exceeding max length
-            if (this.currentInput.length < 12) {
+            if (this.currentInput.replace(/[^0-9]/g, '').length < 12) {
                 this.currentInput += number;
             }
         }
@@ -96,17 +224,24 @@ class Calculator {
      * Handle decimal point input
      */
     handleDecimalInput() {
+        // Clear error state
+        if (this.currentInput === 'Error') {
+            this.clearAll();
+        }
+        
         // Only allow one decimal point per number
         if (!this.decimalUsed) {
             // If starting fresh with a decimal, prepend '0'
-            if (this.waitingForNewInput || this.currentInput === 'Error') {
+            if (this.waitingForNewInput || this.expressionBuilt || this.currentInput === '0') {
                 this.currentInput = '0.';
                 this.waitingForNewInput = false;
+                this.expressionBuilt = false;
             } else {
                 this.currentInput += '.';
             }
             this.decimalUsed = true;
             this.updateDisplay();
+            this.updateLivePreview();
         }
     }
     
@@ -115,13 +250,26 @@ class Calculator {
      * @param {string} operator - The operator to apply
      */
     handleOperator(operator) {
+        // Clear error state
+        if (this.currentInput === 'Error') {
+            this.clearAll();
+        }
+        
+        // If equals was just pressed, start new expression with result
+        if (this.lastAction === 'equals' && this.lastResult !== null) {
+            this.expression = '';
+            this.currentInput = this.lastResult;
+            this.waitingForNewInput = false;
+            this.expressionBuilt = false;
+        }
+        
         // If operator pressed twice, replace the last operator
         if (this.lastAction === 'operator' && this.expression) {
             // Remove the last operator from expression and replace with new one
             this.expression = this.expression.slice(0, -2); // Remove last operator and space
         } else {
-            // Append current input to expression
-            if (!this.waitingForNewInput) {
+            // Append current input to expression if not waiting for new input
+            if (!this.waitingForNewInput && this.currentInput !== 'Error') {
                 this.expression += `${this.formatNumber(this.currentInput)} `;
             }
         }
@@ -140,6 +288,7 @@ class Calculator {
         this.waitingForNewInput = true;
         this.decimalUsed = false;
         this.lastAction = 'operator';
+        this.expressionBuilt = false;
         
         this.updateDisplay();
         this.updateLivePreview();
@@ -149,10 +298,33 @@ class Calculator {
      * Calculate and display the result
      */
     calculateResult() {
-        if (!this.operator || this.waitingForNewInput) return;
+        if (this.currentInput === 'Error') {
+            this.clearAll();
+            return;
+        }
+        
+        // Handle case where only operator is present
+        if (this.operator && this.waitingForNewInput && !this.expressionBuilt) {
+            // If expression is just an operator, do nothing
+            if (!this.expression.trim()) return;
+        }
         
         // Complete the expression with current input
-        const fullExpression = this.expression + this.formatNumber(this.currentInput);
+        let fullExpression = this.expression;
+        if (!this.waitingForNewInput && this.currentInput !== '0' || this.currentInput !== 'Error') {
+            fullExpression = this.expression + this.formatNumber(this.currentInput);
+        } else if (this.expressionBuilt) {
+            fullExpression = this.expression;
+        }
+        
+        // Remove trailing operator if present
+        fullExpression = fullExpression.trim();
+        const lastChar = fullExpression.charAt(fullExpression.length - 1);
+        if (lastChar === '+' || lastChar === '-' || lastChar === '×' || lastChar === '÷' || lastChar === '%') {
+            fullExpression = fullExpression.slice(0, -1).trim();
+        }
+        
+        if (!fullExpression) return;
         
         try {
             // Convert display symbols to JavaScript operators
@@ -169,12 +341,16 @@ class Calculator {
             // Evaluate with floating point precision fix
             const result = this.evaluateExpression(evalExpression);
             
+            // Store last result for chaining operations
+            this.lastResult = this.formatResult(result);
+            
             // Update display with result
-            this.currentInput = this.formatResult(result);
+            this.currentInput = this.lastResult;
             this.expression = fullExpression + ' =';
             this.waitingForNewInput = true;
             this.decimalUsed = this.currentInput.includes('.');
             this.lastAction = 'equals';
+            this.expressionBuilt = true;
             
             this.updateDisplay();
         } catch (error) {
@@ -264,29 +440,36 @@ class Calculator {
      * Update the live preview of the calculation
      */
     updateLivePreview() {
-        if (!this.operator || this.waitingForNewInput) return;
+        if ((!this.operator || this.waitingForNewInput) && !this.expressionBuilt) return;
+        if (this.lastAction === 'equals') return;
         
         try {
-            const previewExpression = this.expression + this.formatNumber(this.currentInput);
+            let previewExpression = this.expression;
+            if (!this.waitingForNewInput && this.currentInput !== 'Error' && !this.expressionBuilt) {
+                previewExpression = this.expression + this.formatNumber(this.currentInput);
+            }
+            
+            // Remove trailing operator
+            previewExpression = previewExpression.trim();
+            const lastChar = previewExpression.charAt(previewExpression.length - 1);
+            if (lastChar === '+' || lastChar === '-' || lastChar === '×' || lastChar === '÷' || lastChar === '%') {
+                return;
+            }
+            
+            if (!previewExpression) return;
+            
             let evalExpression = previewExpression
                 .replace(/×/g, '*')
                 .replace(/÷/g, '/')
                 .replace(/%/g, '%');
             
-            // Don't show preview if expression ends with an operator
-            if (evalExpression.trim().endsWith('*') || 
-                evalExpression.trim().endsWith('/') ||
-                evalExpression.trim().endsWith('+') ||
-                evalExpression.trim().endsWith('-') ||
-                evalExpression.trim().endsWith('%')) {
-                return;
-            }
-            
             const result = this.evaluateExpression(evalExpression);
             this.resultDisplay.textContent = this.formatResult(result);
         } catch (error) {
             // If preview fails, just show current input
-            this.resultDisplay.textContent = this.formatNumber(this.currentInput);
+            if (!this.waitingForNewInput) {
+                this.resultDisplay.textContent = this.formatNumber(this.currentInput);
+            }
         }
     }
     
@@ -300,7 +483,10 @@ class Calculator {
         this.waitingForNewInput = false;
         this.decimalUsed = false;
         this.lastAction = null;
+        this.expressionBuilt = false;
+        this.lastResult = null;
         this.updateDisplay();
+        this.updateLivePreview();
     }
     
     /**
@@ -308,6 +494,11 @@ class Calculator {
      */
     deleteLastCharacter() {
         if (this.currentInput === 'Error') {
+            this.clearAll();
+            return;
+        }
+        
+        if (this.expressionBuilt) {
             this.clearAll();
             return;
         }
@@ -334,7 +525,7 @@ class Calculator {
      * @returns {string} - Formatted number
      */
     formatNumber(num) {
-        if (num === 'Error' || num === 'Infinity') return num;
+        if (num === 'Error' || num === 'Infinity' || num === '-Infinity') return num === '-Infinity' ? '-∞' : (num === 'Infinity' ? '∞' : 'Error');
         
         const number = parseFloat(num);
         if (isNaN(number)) return '0';
@@ -353,19 +544,19 @@ class Calculator {
      */
     formatResult(result) {
         if (!isFinite(result)) {
-            return result > 0 ? 'Infinity' : '-Infinity';
+            return result > 0 ? '∞' : '-∞';
         }
         
         // Handle very large/small numbers with scientific notation
         if (Math.abs(result) > 1e12 || (Math.abs(result) < 1e-6 && result !== 0)) {
-            return result.toExponential(6);
+            return result.toExponential(8);
         }
         
         // Format with appropriate decimal places
-        const formatted = this.formatNumber(result);
+        let formatted = this.formatNumber(result);
         
         // Limit display length
-        if (formatted.length > 12) {
+        if (formatted.length > 14) {
             return parseFloat(result.toPrecision(10)).toString();
         }
         
@@ -389,13 +580,17 @@ class Calculator {
         if (this.isCalculatorKey(e.key)) {
             e.preventDefault();
             
-            // Find and trigger the corresponding button
-            this.triggerButtonForKey(e.key);
+            // Trigger the corresponding function
+            this.triggerFunctionForKey(e.key);
             
             // Add visual feedback to the pressed key
             const button = this.findButtonForKey(e.key);
             if (button) {
                 this.addRippleEffect(button);
+                button.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    button.style.transform = '';
+                }, 100);
             }
         }
     }
@@ -440,8 +635,7 @@ class Calculator {
             'Enter': '[data-action="equals"]',
             '=': '[data-action="equals"]',
             'Escape': '[data-action="clear"]',
-            'Delete': '[data-action="clear"]',
-            'Backspace': '[data-action="delete"]'
+            'Delete': '[data-action="clear"]'
         };
         
         const selector = keyMap[key];
@@ -452,7 +646,7 @@ class Calculator {
      * Trigger calculator function for a keyboard key
      * @param {string} key - Keyboard key
      */
-    triggerButtonForKey(key) {
+    triggerFunctionForKey(key) {
         switch (key) {
             case '0': case '1': case '2': case '3': case '4':
             case '5': case '6': case '7': case '8': case '9':
@@ -504,7 +698,8 @@ class Calculator {
         setTimeout(() => {
             button.classList.remove('ripple');
         }, 600);
-    }}
+    }
+}
 
 // Initialize calculator when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
