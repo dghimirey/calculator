@@ -3,79 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Neo Calculator | Smart & Sleek</title>
-    <!-- Font Awesome 6 (free icons) -->
+    <title>Calculator</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%231e293b' rx='20'/%3E%3Ctext x='50' y='72' font-size='68' text-anchor='middle' fill='%23fbbf24' font-family='Arial'%3E🧮%3C/text%3E%3C/svg%3E">
-    <meta name="description" content="Beautiful calculator with memory, keyboard support, and real-time preview.">
-    <meta name="theme-color" content="#0f172a">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%231e293b' rx='20'/%3E%3Ctext x='50' y='72' font-size='68' text-anchor='middle' fill='%23fbbf24'%3E🧮%3C/text%3E%3C/svg%3E">
 </head>
 <body>
-    <main class="calculator-app" role="main" aria-label="Advanced Calculator">
+    <main class="calculator-app">
         <div class="calculator-container">
             <div class="calc-header" aria-hidden="true">
-                <span class="calc-badge">⚡ NEO CALC</span>
+                <span class="calc-badge">⚡ CALC</span>
                 <i class="fa-regular fa-circle-dot"></i>
             </div>
 
-            <!-- Display area with memory indicator -->
-            <div class="display" role="region" aria-label="Calculator display">
+            <div class="display">
                 <div class="display-status">
                     <span class="memory-status" id="memoryStatusIcon"></span>
                     <span class="mode-status">standard</span>
                 </div>
-                <div class="expression-display" id="expressionDisplay" aria-live="polite">0</div>
-                <div class="result-display" id="resultDisplay" aria-live="assertive">0</div>
+                <div class="expression-display" id="expressionDisplay">0</div>
+                <div class="result-display" id="resultDisplay">0</div>
             </div>
 
-            <!-- Keypad with memory, functions, numbers, operators -->
-            <div class="keypad" role="grid" aria-label="Calculator keypad">
-                <!-- Row 1: Memory -->
-                <button class="key mem-action" data-action="memory-clear" aria-label="Memory clear (MC)">MC</button>
-                <button class="key mem-action" data-action="memory-recall" aria-label="Memory recall (MR)">MR</button>
-                <button class="key mem-action" data-action="memory-add" aria-label="Memory add (M+)">M+</button>
-                <button class="key mem-action" data-action="memory-subtract" aria-label="Memory subtract (M-)">M-</button>
+            <div class="keypad">
+                <!-- Memory row -->
+                <button class="key mem-action" data-action="memory-clear">MC</button>
+                <button class="key mem-action" data-action="memory-recall">MR</button>
+                <button class="key mem-action" data-action="memory-add">M+</button>
+                <button class="key mem-action" data-action="memory-subtract">M-</button>
 
-                <!-- Row 2: Clear, delete, modulo, divide -->
-                <button class="key action" data-action="clear" aria-label="Clear all">AC</button>
-                <button class="key action" data-action="delete" aria-label="Delete last character"><i class="fas fa-backspace"></i></button>
-                <button class="key operator" data-action="modulo" aria-label="Modulo">%</button>
-                <button class="key operator" data-action="divide" aria-label="Divide">÷</button>
+                <!-- Row 2 -->
+                <button class="key action" data-action="clear">AC</button>
+                <button class="key action" data-action="delete"><i class="fas fa-backspace"></i></button>
+                <button class="key operator" data-action="modulo">%</button>
+                <button class="key operator" data-action="divide">÷</button>
 
-                <!-- Row 3: 7 8 9 multiply -->
+                <!-- Row 3 -->
                 <button class="key number" data-number="7">7</button>
                 <button class="key number" data-number="8">8</button>
                 <button class="key number" data-number="9">9</button>
-                <button class="key operator" data-action="multiply" aria-label="Multiply">×</button>
+                <button class="key operator" data-action="multiply">×</button>
 
-                <!-- Row 4: 4 5 6 subtract -->
+                <!-- Row 4 -->
                 <button class="key number" data-number="4">4</button>
                 <button class="key number" data-number="5">5</button>
                 <button class="key number" data-number="6">6</button>
-                <button class="key operator" data-action="subtract" aria-label="Subtract">−</button>
+                <button class="key operator" data-action="subtract">−</button>
 
-                <!-- Row 5: 1 2 3 add -->
+                <!-- Row 5 -->
                 <button class="key number" data-number="1">1</button>
                 <button class="key number" data-number="2">2</button>
                 <button class="key number" data-number="3">3</button>
-                <button class="key operator" data-action="add" aria-label="Add">+</button>
+                <button class="key operator" data-action="add">+</button>
 
-                <!-- Row 6: 0 (wide), decimal, square root, sign toggle, equals -->
+                <!-- Row 6 -->
                 <button class="key number wide" data-number="0">0</button>
-                <button class="key number" data-action="decimal" aria-label="Decimal point">.</button>
-                <button class="key function" data-action="square-root" aria-label="Square root">√</button>
-                <button class="key function" data-action="sign" aria-label="Toggle sign">±</button>
-                <button class="key equals" data-action="equals" aria-label="Equals">=</button>
+                <button class="key number" data-action="decimal">.</button>
+                <button class="key function" data-action="square-root">√</button>
+                <button class="key function" data-action="sign">±</button>
+                <button class="key equals" data-action="equals">=</button>
             </div>
 
-            <div class="keyboard-hint" aria-live="polite">
+            <div class="keyboard-hint">
                 <i class="fa-regular fa-keyboard"></i>
-                <span><kbd>Enter</kbd> = <kbd>Esc</kbd> AC <kbd>⌫</kbd> Del <kbd>%</kbd> <kbd>+ - * /</kbd></span>
+                <span><kbd>Enter</kbd> <kbd>Esc</kbd> <kbd>⌫</kbd> <kbd>%</kbd> <kbd>+-*/</kbd></span>
             </div>
         </div>
     </main>
-
     <script src="script.js"></script>
 </body>
 </html>
