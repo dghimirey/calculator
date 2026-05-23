@@ -1,14 +1,12 @@
 :root {
-    /* Dark theme base colors */
-    --bg-gradient-start: #0f172a;
-    --bg-gradient-end: #1e293b;
-    --calculator-bg: rgba(30, 41, 59, 0.85);
-    --display-bg: rgba(15, 23, 42, 0.6);
+    --bg-gradient-start: #0b1120;
+    --bg-gradient-end: #19233c;
+    --calculator-bg: rgba(18, 25, 45, 0.85);
+    --display-bg: rgba(10, 15, 27, 0.6);
     --text-primary: #f1f5f9;
     --text-secondary: #94a3b8;
-    --text-muted: #64748b;
+    --text-muted: #5b6e8c;
     
-    /* Key colors */
     --key-number-bg: rgba(51, 65, 85, 0.8);
     --key-number-hover: #475569;
     --key-number-active: #334155;
@@ -33,32 +31,21 @@
     --key-mem-hover: #f472b6;
     --key-mem-active: #db2777;
     
-    /* Effects */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    --glow-operator: 0 0 12px rgba(245, 158, 11, 0.4);
-    --glow-equals: 0 0 12px rgba(16, 185, 129, 0.4);
-    
-    /* Glassmorphism */
     --glass-border: rgba(255, 255, 255, 0.08);
     --glass-highlight: rgba(255, 255, 255, 0.05);
-    
-    /* Transitions */
-    --transition-fast: 0.1s ease;
-    --transition-normal: 0.2s ease;
-    --transition-slow: 0.3s ease;
+    --shadow-xl: 0 25px 35px -12px rgba(0, 0, 0, 0.4);
+    --transition: 0.12s ease;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    user-select: none;
 }
 
 body {
-    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
     color: var(--text-primary);
     min-height: 100vh;
@@ -66,304 +53,153 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px;
-    position: relative;
-    backdrop-filter: blur(0px);
 }
 
-/* Animated background decoration */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.1) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: -1;
-}
-
-/* ============================================
-   Calculator Container - Glassmorphic Card
-   ============================================ */
 .calculator-container {
     background: var(--calculator-bg);
-    backdrop-filter: blur(16px);
-    border-radius: 36px;
+    backdrop-filter: blur(18px);
+    border-radius: 40px;
     box-shadow: var(--shadow-xl), inset 0 1px 0 var(--glass-border);
     width: 100%;
-    max-width: 380px;
-    padding: 20px;
-    position: relative;
-    transition: transform var(--transition-slow), box-shadow var(--transition-slow);
+    max-width: 420px;
+    padding: 22px;
     border: 1px solid var(--glass-border);
+    transition: transform 0.2s ease;
 }
 
 .calculator-container:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 25px 35px -12px rgba(0, 0, 0, 0.25);
+    transform: scale(1.01);
 }
 
-/* Header section */
 .calc-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     margin-bottom: 12px;
-    padding: 0 8px;
+    padding: 0 6px;
     opacity: 0.7;
 }
 
 .calc-badge {
     font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 4px 10px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.08);
+    padding: 4px 12px;
     border-radius: 30px;
-    color: var(--text-secondary);
+    letter-spacing: 0.5px;
 }
 
-.calc-header i {
-    color: var(--text-muted);
-    font-size: 0.8rem;
-}
-
-/* Display status row (memory/mode) */
-.display-status {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.3px;
-    color: var(--text-muted);
-}
-
-.memory-status, .mode-status {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 2px 8px;
-    border-radius: 20px;
-}
-
-/* ============================================
-   Dual Display System - Enhanced
-   ============================================ */
 .display {
     background: var(--display-bg);
     backdrop-filter: blur(8px);
-    border-radius: 24px;
+    border-radius: 28px;
     padding: 20px 20px 16px;
     margin-bottom: 24px;
     text-align: right;
     min-height: 130px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    overflow: hidden;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 0 var(--glass-highlight);
     border: 1px solid var(--glass-border);
-    transition: all var(--transition-normal);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.display-status {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.memory-status, .mode-status {
+    background: rgba(255,255,255,0.05);
+    padding: 2px 10px;
+    border-radius: 30px;
 }
 
 .expression-display {
     font-size: 1rem;
     color: var(--text-secondary);
-    margin-bottom: 10px;
     min-height: 28px;
     word-break: break-word;
-    overflow-wrap: break-word;
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    letter-spacing: 0.3px;
-    transition: color var(--transition-fast);
+    font-family: 'SF Mono', monospace;
+    margin-bottom: 10px;
 }
 
 .result-display {
-    font-size: 2.6rem;
+    font-size: 2.8rem;
     font-weight: 700;
     line-height: 1.2;
     word-break: break-word;
-    overflow-wrap: break-word;
-    font-family: 'Inter', system-ui, sans-serif;
     letter-spacing: -0.5px;
-    transition: transform var(--transition-fast);
 }
 
-/* ============================================
-   Keypad Grid - Improved Spacing
-   ============================================ */
 .keypad {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 12px;
 }
 
-/* ============================================
-   Key Button Styling - Modern 3D Effect
-   ============================================ */
 .key {
     border: none;
-    border-radius: 20px;
+    border-radius: 24px;
     font-size: 1.4rem;
     font-weight: 500;
-    height: 68px;
+    height: 70px;
     cursor: pointer;
     display: flex;
-    justify-content: center;
     align-items: center;
-    transition: all var(--transition-fast);
-    position: relative;
-    overflow: hidden;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    font-family: inherit;
+    justify-content: center;
+    transition: all var(--transition);
+    background: rgba(30, 41, 59, 0.7);
+    color: white;
     backdrop-filter: blur(4px);
-    box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-/* Number keys */
 .key.number {
     background: var(--key-number-bg);
-    color: var(--text-primary);
-    border: 1px solid rgba(255, 255, 255, 0.05);
 }
+.key.number:hover { background: var(--key-number-hover); transform: translateY(-2px);}
+.key.number:active { transform: translateY(1px); background: var(--key-number-active);}
 
-.key.number:hover {
-    background: var(--key-number-hover);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.key.number:active {
-    transform: translateY(1px);
-    background: var(--key-number-active);
-    box-shadow: var(--shadow-sm);
-}
-
-/* Operator keys */
 .key.operator {
     background: var(--key-operator-bg);
-    color: white;
-    font-weight: 600;
-    box-shadow: var(--shadow-sm), 0 0 0 1px rgba(245, 158, 11, 0.3);
+    font-weight: 700;
 }
+.key.operator:hover { background: var(--key-operator-hover); transform: translateY(-2px);}
+.key.operator:active { transform: translateY(1px);}
 
-.key.operator:hover {
-    background: var(--key-operator-hover);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md), var(--glow-operator);
-}
-
-.key.operator:active {
-    transform: translateY(1px);
-    background: var(--key-operator-active);
-}
-
-/* Action keys (AC, Delete) */
 .key.action {
     background: var(--key-action-bg);
-    color: white;
-    font-weight: 500;
-    letter-spacing: 0.5px;
 }
+.key.action:hover { background: var(--key-action-hover); transform: translateY(-2px);}
 
-.key.action:hover {
-    background: var(--key-action-hover);
-    transform: translateY(-2px);
-}
-
-.key.action:active {
-    transform: translateY(1px);
-    background: var(--key-action-active);
-}
-
-/* Equals key */
 .key.equals {
     background: var(--key-equals-bg);
-    color: white;
-    font-weight: 700;
     font-size: 1.6rem;
-    box-shadow: var(--shadow-sm), 0 0 0 1px rgba(16, 185, 129, 0.3);
 }
+.key.equals:hover { background: var(--key-equals-hover); transform: translateY(-2px);}
 
-.key.equals:hover {
-    background: var(--key-equals-hover);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md), var(--glow-equals);
-}
-
-.key.equals:active {
-    transform: translateY(1px);
-    background: var(--key-equals-active);
-}
-
-/* Function keys (sqrt, ±) */
 .key.function {
     background: var(--key-function-bg);
-    color: white;
-    font-weight: 600;
 }
+.key.function:hover { background: var(--key-function-hover); transform: translateY(-2px);}
 
-.key.function:hover {
-    background: var(--key-function-hover);
-    transform: translateY(-2px);
-}
-
-.key.function:active {
-    transform: translateY(1px);
-    background: var(--key-function-active);
-}
-
-/* Memory keys */
 .key.mem-action {
     background: var(--key-mem-bg);
-    color: white;
     font-size: 0.9rem;
     font-weight: 600;
-    letter-spacing: 0.3px;
 }
+.key.mem-action:hover { background: var(--key-mem-hover); transform: translateY(-2px);}
 
-.key.mem-action:hover {
-    background: var(--key-mem-hover);
-    transform: translateY(-2px);
-}
-
-.key.mem-action:active {
-    transform: translateY(1px);
-    background: var(--key-mem-active);
-}
-
-/* Wide key for zero */
 .key.wide {
     grid-column: span 2;
 }
 
-/* Additional utility classes */
-.operator-symbol, .equals-text {
-    margin-left: 2px;
-}
-
-.visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-}
-
-/* ============================================
-   Keyboard Hint Styling
-   ============================================ */
 .keyboard-hint {
     margin-top: 20px;
-    padding: 10px 12px;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 40px;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -371,152 +207,44 @@ body::before {
     font-size: 0.7rem;
     color: var(--text-muted);
     border: 1px solid var(--glass-border);
-    backdrop-filter: blur(4px);
 }
 
-.keyboard-hint i {
-    font-size: 0.8rem;
-    opacity: 0.7;
-}
-
-.keyboard-hint kbd {
-    background: rgba(0, 0, 0, 0.4);
+kbd {
+    background: rgba(0,0,0,0.5);
     padding: 2px 6px;
     border-radius: 6px;
     font-family: monospace;
-    font-size: 0.65rem;
     margin: 0 2px;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-/* ============================================
-   Ripple Effect Animation
-   ============================================ */
+/* ripple effect */
 .key::after {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(255, 255, 255, 0.35);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.4s ease-out, height 0.4s ease-out;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
     pointer-events: none;
-}
-
-.key.ripple::after {
-    width: 200%;
-    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.4) 10%, transparent 80%);
+    transform: scale(0);
     opacity: 0;
-    transition: width 0.4s ease-out, height 0.4s ease-out, opacity 0.4s ease-out;
+    border-radius: inherit;
+    transition: transform 0.4s, opacity 0.3s;
+}
+.key.ripple::after {
+    transform: scale(4);
+    opacity: 1;
+    transition: transform 0.4s ease-out, opacity 0.5s;
 }
 
-/* ============================================
-   Responsive Design
-   ============================================ */
-@media (min-width: 640px) {
-    .calculator-container {
-        max-width: 420px;
-        padding: 24px;
-    }
-    
-    .display {
-        min-height: 140px;
-        padding: 24px 20px 18px;
-        margin-bottom: 28px;
-    }
-    
-    .expression-display {
-        font-size: 1.1rem;
-        min-height: 30px;
-    }
-    
-    .result-display {
-        font-size: 3rem;
-    }
-    
-    .key {
-        height: 74px;
-        font-size: 1.5rem;
-        border-radius: 22px;
-    }
-    
-    .keypad {
-        gap: 12px;
-    }
-    
-    .key.action {
-        font-size: 1.2rem;
-    }
-    
-    .key.equals {
-        font-size: 1.7rem;
-    }
-}
-
-@media (min-width: 1024px) {
-    .calculator-container {
-        max-width: 460px;
-        padding: 28px;
-    }
-    
-    .display {
-        min-height: 150px;
-    }
-    
-    .result-display {
-        font-size: 3.2rem;
-    }
-    
-    .key {
-        height: 80px;
-        font-size: 1.6rem;
-    }
-}
-
-/* ============================================
-   Accessibility & Focus States
-   ============================================ */
 .key:focus-visible {
     outline: 3px solid var(--key-operator-bg);
-    outline-offset: 3px;
-    transform: scale(0.98);
+    outline-offset: 2px;
 }
 
-.key.number:focus-visible {
-    outline-color: var(--key-number-hover);
-}
-
-.key.equals:focus-visible {
-    outline-color: var(--key-equals-bg);
-}
-
-/* Reduced motion preference */
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
-    
-    .calculator-container:hover {
-        transform: none;
-    }
-    
-    .key:hover {
-        transform: none;
-    }
-}
-
-/* Loading & error states (optional for JS integration) */
-.display.error .result-display {
-    color: #f87171;
-}
-
-.display.error .expression-display {
-    color: #f87171;
+@media (max-width: 480px) {
+    .calculator-container { padding: 16px; max-width: 360px; }
+    .key { height: 62px; font-size: 1.3rem; border-radius: 20px; }
+    .result-display { font-size: 2.2rem; }
 }
