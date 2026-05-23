@@ -6,7 +6,6 @@
     --text-secondary: #a0a0b0;
     --text-muted: #6c6c7a;
     
-    /* Key colors - flat, no neon */
     --key-number-bg: #3a3a4a;
     --key-number-hover: #4a4a5a;
     --key-number-active: #2a2a3a;
@@ -32,7 +31,6 @@
     --key-mem-active: #a04a74;
     
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
-    --shadow-md: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 * {
@@ -55,7 +53,7 @@ body {
 .calculator-container {
     background: var(--calculator-bg);
     border-radius: 28px;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-sm);
     width: 100%;
     max-width: 420px;
     padding: 20px;
@@ -133,55 +131,39 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.1s ease, transform 0.05s ease;
+    transition: background 0.1s ease;
     background: #3a3a4a;
     color: white;
     box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
 }
 
-.key.number {
-    background: var(--key-number-bg);
-}
+.key.number { background: var(--key-number-bg); }
 .key.number:hover { background: var(--key-number-hover); }
 .key.number:active { transform: scale(0.97); background: var(--key-number-active); }
 
-.key.operator {
-    background: var(--key-operator-bg);
-    font-weight: 700;
-}
+.key.operator { background: var(--key-operator-bg); font-weight: 700; }
 .key.operator:hover { background: var(--key-operator-hover); }
 .key.operator:active { transform: scale(0.97); background: var(--key-operator-active); }
 
-.key.action {
-    background: var(--key-action-bg);
-}
+.key.action { background: var(--key-action-bg); }
 .key.action:hover { background: var(--key-action-hover); }
 .key.action:active { transform: scale(0.97); background: var(--key-action-active); }
 
-.key.equals {
-    background: var(--key-equals-bg);
-    font-size: 1.6rem;
-}
+.key.equals { background: var(--key-equals-bg); font-size: 1.6rem; }
 .key.equals:hover { background: var(--key-equals-hover); }
 .key.equals:active { transform: scale(0.97); background: var(--key-equals-active); }
 
-.key.function {
-    background: var(--key-function-bg);
-}
+.key.function { background: var(--key-function-bg); }
 .key.function:hover { background: var(--key-function-hover); }
 .key.function:active { transform: scale(0.97); background: var(--key-function-active); }
 
-.key.mem-action {
-    background: var(--key-mem-bg);
-    font-size: 0.9rem;
-    font-weight: 600;
-}
+.key.mem-action { background: var(--key-mem-bg); font-size: 0.9rem; font-weight: 600; }
 .key.mem-action:hover { background: var(--key-mem-hover); }
 .key.mem-action:active { transform: scale(0.97); background: var(--key-mem-active); }
 
-.key.wide {
-    grid-column: span 2;
-}
+.key.wide { grid-column: span 2; }
 
 .keyboard-hint {
     margin-top: 20px;
@@ -204,19 +186,18 @@ kbd {
     margin: 0 2px;
 }
 
-/* Ripple effect - subtle, no neon */
+/* ripple – subtle, no glow */
 .key::after {
     content: '';
     position: absolute;
-    width: 100%;
-    height: 100%;
     top: 0;
     left: 0;
-    pointer-events: none;
+    width: 100%;
+    height: 100%;
     background: radial-gradient(circle, rgba(255,255,255,0.2) 10%, transparent 80%);
     transform: scale(0);
     opacity: 0;
-    border-radius: inherit;
+    pointer-events: none;
     transition: transform 0.3s, opacity 0.2s;
 }
 .key.ripple::after {
