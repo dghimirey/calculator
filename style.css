@@ -1,20 +1,54 @@
 :root {
-    --bg-color: #1c1c1e;
-    --calculator-bg: #2c2c2e;
-    --display-bg: #3a3a3c;
-    --text-primary: #f5f5f7;
-    --text-secondary: #aeaeb2;
-    --key-number-bg: #3a3a3c;
-    --key-number-hover: #48484a;
-    --key-operator-bg: #ff9500;
-    --key-operator-hover: #ffad33;
-    --key-action-bg: #636366;
-    --key-action-hover: #7c7c80;
-    --key-equals-bg: #30b0c7;
-    --key-equals-hover: #4ac7df;
-    --shadow-color: rgba(0, 0, 0, 0.3);
-    --ripple-color: rgba(255, 255, 255, 0.3);
-    --glass-border: rgba(255, 255, 255, 0.05);
+    /* Dark theme base colors */
+    --bg-gradient-start: #0f172a;
+    --bg-gradient-end: #1e293b;
+    --calculator-bg: rgba(30, 41, 59, 0.85);
+    --display-bg: rgba(15, 23, 42, 0.6);
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    
+    /* Key colors */
+    --key-number-bg: rgba(51, 65, 85, 0.8);
+    --key-number-hover: #475569;
+    --key-number-active: #334155;
+    
+    --key-operator-bg: #f59e0b;
+    --key-operator-hover: #fbbf24;
+    --key-operator-active: #d97706;
+    
+    --key-action-bg: #475569;
+    --key-action-hover: #64748b;
+    --key-action-active: #334155;
+    
+    --key-equals-bg: #10b981;
+    --key-equals-hover: #34d399;
+    --key-equals-active: #059669;
+    
+    --key-function-bg: #8b5cf6;
+    --key-function-hover: #a78bfa;
+    --key-function-active: #7c3aed;
+    
+    --key-mem-bg: #ec489a;
+    --key-mem-hover: #f472b6;
+    --key-mem-active: #db2777;
+    
+    /* Effects */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --glow-operator: 0 0 12px rgba(245, 158, 11, 0.4);
+    --glow-equals: 0 0 12px rgba(16, 185, 129, 0.4);
+    
+    /* Glassmorphism */
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-highlight: rgba(255, 255, 255, 0.05);
+    
+    /* Transitions */
+    --transition-fast: 0.1s ease;
+    --transition-normal: 0.2s ease;
+    --transition-slow: 0.3s ease;
 }
 
 * {
@@ -24,157 +58,280 @@
 }
 
 body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background-color: var(--bg-color);
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
     color: var(--text-primary);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 16px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* ============================================
-   Calculator Container with Glassmorphism
-   ============================================ */
-.calculator-container {
-    background-color: var(--calculator-bg);
-    border-radius: 24px;
-    box-shadow: 
-        0 10px 30px var(--shadow-color),
-        inset 0 1px 0 var(--glass-border);
-    width: 100%;
-    max-width: 360px;
     padding: 20px;
     position: relative;
-    overflow: hidden;
+    backdrop-filter: blur(0px);
+}
+
+/* Animated background decoration */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.1) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: -1;
 }
 
 /* ============================================
-   Dual Display System
+   Calculator Container - Glassmorphic Card
+   ============================================ */
+.calculator-container {
+    background: var(--calculator-bg);
+    backdrop-filter: blur(16px);
+    border-radius: 36px;
+    box-shadow: var(--shadow-xl), inset 0 1px 0 var(--glass-border);
+    width: 100%;
+    max-width: 380px;
+    padding: 20px;
+    position: relative;
+    transition: transform var(--transition-slow), box-shadow var(--transition-slow);
+    border: 1px solid var(--glass-border);
+}
+
+.calculator-container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 25px 35px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Header section */
+.calc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 0 8px;
+    opacity: 0.7;
+}
+
+.calc-badge {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 10px;
+    border-radius: 30px;
+    color: var(--text-secondary);
+}
+
+.calc-header i {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+/* Display status row (memory/mode) */
+.display-status {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    color: var(--text-muted);
+}
+
+.memory-status, .mode-status {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 8px;
+    border-radius: 20px;
+}
+
+/* ============================================
+   Dual Display System - Enhanced
    ============================================ */
 .display {
-    background-color: var(--display-bg);
-    border-radius: 16px;
-    padding: 20px;
+    background: var(--display-bg);
+    backdrop-filter: blur(8px);
+    border-radius: 24px;
+    padding: 20px 20px 16px;
     margin-bottom: 24px;
     text-align: right;
-    min-height: 120px;
+    min-height: 130px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     overflow: hidden;
-    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.08);
-    margin-top: 20px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 0 var(--glass-highlight);
+    border: 1px solid var(--glass-border);
+    transition: all var(--transition-normal);
 }
 
 .expression-display {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--text-secondary);
-    margin-bottom: 8px;
-    min-height: 24px;
-    word-break: break-all;
+    margin-bottom: 10px;
+    min-height: 28px;
+    word-break: break-word;
     overflow-wrap: break-word;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    letter-spacing: 0.3px;
+    transition: color var(--transition-fast);
 }
 
 .result-display {
-    font-size: 2.8rem;
-    font-weight: 600;
-    line-height: 1.1;
-    word-break: break-all;
+    font-size: 2.6rem;
+    font-weight: 700;
+    line-height: 1.2;
+    word-break: break-word;
     overflow-wrap: break-word;
+    font-family: 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.5px;
+    transition: transform var(--transition-fast);
 }
 
 /* ============================================
-   Keypad Grid Layout
+   Keypad Grid - Improved Spacing
    ============================================ */
 .keypad {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-gap: 12px;
+    gap: 10px;
 }
 
 /* ============================================
-   Key Button Styling
+   Key Button Styling - Modern 3D Effect
    ============================================ */
 .key {
     border: none;
-    border-radius: 16px;
-    font-size: 1.5rem;
+    border-radius: 20px;
+    font-size: 1.4rem;
     font-weight: 500;
-    height: 70px;
+    height: 68px;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: all 0.1s ease;
+    transition: all var(--transition-fast);
     position: relative;
     overflow: hidden;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
+    font-family: inherit;
+    backdrop-filter: blur(4px);
+    box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /* Number keys */
 .key.number {
-    background-color: var(--key-number-bg);
+    background: var(--key-number-bg);
     color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.key.number:hover, .key.number:focus-visible {
-    background-color: var(--key-number-hover);
+.key.number:hover {
+    background: var(--key-number-hover);
     transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .key.number:active {
-    transform: translateY(0);
+    transform: translateY(1px);
+    background: var(--key-number-active);
+    box-shadow: var(--shadow-sm);
 }
 
 /* Operator keys */
 .key.operator {
-    background-color: var(--key-operator-bg);
+    background: var(--key-operator-bg);
     color: white;
+    font-weight: 600;
+    box-shadow: var(--shadow-sm), 0 0 0 1px rgba(245, 158, 11, 0.3);
 }
 
-.key.operator:hover, .key.operator:focus-visible {
-    background-color: var(--key-operator-hover);
+.key.operator:hover {
+    background: var(--key-operator-hover);
     transform: translateY(-2px);
+    box-shadow: var(--shadow-md), var(--glow-operator);
 }
 
 .key.operator:active {
-    transform: translateY(0);
+    transform: translateY(1px);
+    background: var(--key-operator-active);
 }
 
 /* Action keys (AC, Delete) */
 .key.action {
-    background-color: var(--key-action-bg);
+    background: var(--key-action-bg);
     color: white;
-    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
 }
 
-.key.action:hover, .key.action:focus-visible {
-    background-color: var(--key-action-hover);
+.key.action:hover {
+    background: var(--key-action-hover);
     transform: translateY(-2px);
 }
 
 .key.action:active {
-    transform: translateY(0);
+    transform: translateY(1px);
+    background: var(--key-action-active);
 }
 
 /* Equals key */
 .key.equals {
-    background-color: var(--key-equals-bg);
+    background: var(--key-equals-bg);
     color: white;
-    grid-column: span 1;
+    font-weight: 700;
+    font-size: 1.6rem;
+    box-shadow: var(--shadow-sm), 0 0 0 1px rgba(16, 185, 129, 0.3);
 }
 
-.key.equals:hover, .key.equals:focus-visible {
-    background-color: var(--key-equals-hover);
+.key.equals:hover {
+    background: var(--key-equals-hover);
     transform: translateY(-2px);
+    box-shadow: var(--shadow-md), var(--glow-equals);
 }
 
 .key.equals:active {
-    transform: translateY(0);
+    transform: translateY(1px);
+    background: var(--key-equals-active);
+}
+
+/* Function keys (sqrt, ±) */
+.key.function {
+    background: var(--key-function-bg);
+    color: white;
+    font-weight: 600;
+}
+
+.key.function:hover {
+    background: var(--key-function-hover);
+    transform: translateY(-2px);
+}
+
+.key.function:active {
+    transform: translateY(1px);
+    background: var(--key-function-active);
+}
+
+/* Memory keys */
+.key.mem-action {
+    background: var(--key-mem-bg);
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.key.mem-action:hover {
+    background: var(--key-mem-hover);
+    transform: translateY(-2px);
+}
+
+.key.mem-action:active {
+    transform: translateY(1px);
+    background: var(--key-mem-active);
 }
 
 /* Wide key for zero */
@@ -182,76 +339,184 @@ body {
     grid-column: span 2;
 }
 
-/* Ripple effect */
+/* Additional utility classes */
+.operator-symbol, .equals-text {
+    margin-left: 2px;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* ============================================
+   Keyboard Hint Styling
+   ============================================ */
+.keyboard-hint {
+    margin-top: 20px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(4px);
+}
+
+.keyboard-hint i {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.keyboard-hint kbd {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 0.65rem;
+    margin: 0 2px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   Ripple Effect Animation
+   ============================================ */
 .key::after {
     content: '';
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 5px;
-    height: 5px;
-    background: var(--ripple-color);
-    opacity: 0;
-    border-radius: 100%;
-    transform: scale(1, 1) translate(-50%);
-    transform-origin: 50% 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease-out, height 0.4s ease-out;
+    pointer-events: none;
 }
 
 .key.ripple::after {
-    animation: ripple 0.6s ease-out;
-}
-
-@keyframes ripple {
-    0% {
-        transform: scale(0, 0);
-        opacity: 0.5;
-    }
-    100% {
-        transform: scale(40, 40);
-        opacity: 0;
-    }
+    width: 200%;
+    height: 200%;
+    opacity: 0;
+    transition: width 0.4s ease-out, height 0.4s ease-out, opacity 0.4s ease-out;
 }
 
 /* ============================================
-   Responsive Design for Larger Screens
+   Responsive Design
    ============================================ */
-@media (min-width: 768px) {
+@media (min-width: 640px) {
     .calculator-container {
         max-width: 420px;
-        padding: 28px;
+        padding: 24px;
     }
     
     .display {
         min-height: 140px;
-        padding: 24px;
-        margin-bottom: 32px;
+        padding: 24px 20px 18px;
+        margin-bottom: 28px;
     }
     
     .expression-display {
-        font-size: 1.3rem;
+        font-size: 1.1rem;
+        min-height: 30px;
     }
     
     .result-display {
-        font-size: 3.5rem;
+        font-size: 3rem;
+    }
+    
+    .key {
+        height: 74px;
+        font-size: 1.5rem;
+        border-radius: 22px;
+    }
+    
+    .keypad {
+        gap: 12px;
+    }
+    
+    .key.action {
+        font-size: 1.2rem;
+    }
+    
+    .key.equals {
+        font-size: 1.7rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .calculator-container {
+        max-width: 460px;
+        padding: 28px;
+    }
+    
+    .display {
+        min-height: 150px;
+    }
+    
+    .result-display {
+        font-size: 3.2rem;
     }
     
     .key {
         height: 80px;
-        font-size: 1.7rem;
-        border-radius: 20px;
-    }
-    
-    .keypad {
-        grid-gap: 16px;
-    }
-    
-    .key.action {
-        font-size: 1.4rem;
+        font-size: 1.6rem;
     }
 }
 
-/* Accessibility: Focus styles */
+/* ============================================
+   Accessibility & Focus States
+   ============================================ */
 .key:focus-visible {
     outline: 3px solid var(--key-operator-bg);
-    outline-offset: 2px;
+    outline-offset: 3px;
+    transform: scale(0.98);
+}
+
+.key.number:focus-visible {
+    outline-color: var(--key-number-hover);
+}
+
+.key.equals:focus-visible {
+    outline-color: var(--key-equals-bg);
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .calculator-container:hover {
+        transform: none;
+    }
+    
+    .key:hover {
+        transform: none;
+    }
+}
+
+/* Loading & error states (optional for JS integration) */
+.display.error .result-display {
+    color: #f87171;
+}
+
+.display.error .expression-display {
+    color: #f87171;
 }
